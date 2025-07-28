@@ -1,4 +1,6 @@
 from django.urls import path
+from django.conf import settings
+from django.conf.urls.static import static
 from . import views
 
 urlpatterns = [
@@ -12,3 +14,7 @@ urlpatterns = [
     path('dashboard/bookings/city/export-csv/', views.bookings_by_city_export_csv, name='dashboard-bookings-by-city-export-csv'),
     path('dashboard/search/', views.global_search_view, name='dashboard-global-search'),
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

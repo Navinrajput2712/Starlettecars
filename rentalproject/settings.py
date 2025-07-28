@@ -96,7 +96,7 @@ TEMPLATES = [
                 os.path.join(BASE_DIR / 'templates'),
                 os.path.join(BASE_DIR / 'rentalapp/templates'),
                 os.path.join(BASE_DIR / 'rental_business/templates'),
-                os.path.join(BASE_DIR / 'dashboard/templates')
+                os.path.join(BASE_DIR / 'dashboard/templates/dashboard')
             ],
         # "DIRS": [BASE_DIR / "templates"],
         "OPTIONS": {
@@ -167,10 +167,15 @@ mimetypes.add_type("text/css", ".css", True)
 
 STATIC_URL = config('STATIC_URL', default='/static/')
 
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, "rentalapp/static"),
-    os.path.join(BASE_DIR, "rental_business/static"),
-]
+if DEBUG:
+    STATICFILES_DIRS = [
+        os.path.join(BASE_DIR, "static"),
+        os.path.join(BASE_DIR, "rentalapp/static"),
+        os.path.join(BASE_DIR, "rental_business/static"),
+        os.path.join(BASE_DIR, "dashboard/static"),
+    ]
+else:
+    STATICFILES_DIRS = []
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 

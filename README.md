@@ -8,7 +8,7 @@ Welcome to the project! This guide will help you set up and run the project effi
 ### Open the project in VS Code or your favorite editor.
 
 ---
-## 🐍 Python3 & Django 5.0.6 Setup
+## Python3 & Django 5.0.6 Setup
 
 ### 1️⃣ Prerequisites:
 Ensure you have the following installed:
@@ -124,7 +124,8 @@ npm init -y
 
 ### 2️⃣ Install Tailwind CSS and Required Tools:
 ```sh
-npm install -D tailwindcss postcss postcss-cli autoprefixer concurrently
+npm install -D tailwindcss postcss postcss-cli autoprefixer concurrently nodemon
+npm install caniuse-lite flowbite swiper
 npx tailwindcss init -p
 ```
 
@@ -161,10 +162,9 @@ module.exports = {
 Add or replace the current content of the scripts with:
 ```json
 "scripts": {
-    "build:rentalapp": "npx tailwindcss -i ./static/css/tailwind.css -o ./rentalapp/static/css/tailwind-output.css --watch",
-    "build:rental_business": "npx tailwindcss -i ./static/css/tailwind.css -o ./rental_business/static/css/tailwind-output.css --watch",
+    "build:tailwindcss": "npx tailwindcss -i ./static/css/tailwind.css -o ./static/css/tailwind-output.css --watch",
     "build": "tailwindcss -i ./static/css/tailwind.css -o ./static/css/tailwind-output.css --minify",
-    "watch": "concurrently \"npm run build:rentalapp\" \"npm run build:rental_business\"",
+    "watch": "concurrently \"npm run build:tailwindcss\"",
     "start": "npm run watch"
   },
 ```
@@ -189,21 +189,11 @@ In your Django HTML:
 <link href="{% static 'css/tailwind-output.css' %}" rel="stylesheet" />
 ```
 
-
-### 9️⃣ Clean Static Output (Optional)
-To delete old compiled CSS files manually:
-
-✅ For Windows PowerShell:
-```powershell
-Remove-Item -Recurse -Force rentalapp/static/css/tailwind-output.css
-Remove-Item -Recurse -Force rental_business/static/css/tailwind-output.css
-```
-
-Or from terminal (cmd or Bash):
-
-```bash
-del rentalapp/static/css/tailwind-output.css
-del rental_business/static/css/tailwind-output.css
+---
+## Collect All Static Files for Deployment:
+It will create a static folder:
+```sh
+python manage.py collectstatic
 ```
 
 ---
