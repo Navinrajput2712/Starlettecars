@@ -10,140 +10,141 @@
 {% block content %}
 
 <section class=" relative mt-[10rem] bg-gray-50">
-  <div class="w-auto sm:w-auto xl:w-10/12 2xl:w-11/12  mx-auto p-6 lg:px-[3rem] bg-white shadow-lg rounded-lg">
-    {% comment %} w-[120rem] {% endcomment %}
-    <!-- Product Details Container -->
-    <div class=" overflow-hidden">
-      <div class="md:flex p-3 sm:p-5 space-y-6 md:space-y-0 md:space-x-6">
-        <!-- Product Image -->
-        <div class="md:w-1/2">
-          <div class="p-6 flex justify-center items-baseline">
-            <img src="/media/{{ vehicle.buss_vehicle_photo }}" class="w-full object-fill rounded-xl hover:scale-105 hover:cursor-grab border-2 border-solid border-gray-200 hover:border-yellow-400 shadow-sm hover:shadow-lg" alt="Product Image">
-          </div>
-          <div class="p-6 flex space-x-6 w-[35%]">
-            <img src="/media/{{ vehicle.buss_vehicle_photo }}" class="w-full object-fill rounded-xl hover:scale-110 hover:cursor-grab border-2 border-solid border-gray-200 hover:border-yellow-400 shadow-sm hover:shadow-lg" alt="Product Image">
-            <img src="/media/{{ vehicle.buss_vehicle_photo }}" class="w-full object-fill rounded-xl hover:scale-110 hover:cursor-grab border-2 border-solid border-gray-200 hover:border-yellow-400 shadow-sm hover:shadow-lg" alt="Product Image">
-            <img src="/media/{{ vehicle.buss_vehicle_photo }}" class="w-full object-fill rounded-xl hover:scale-110 hover:cursor-grab border-2 border-solid border-gray-200 hover:border-yellow-400 shadow-sm hover:shadow-lg" alt="Product Image">
-          
-          </div>
-        </div>
-
-        
-        <!-- Product Details -->
-        <div class="md:w-1/2 p-6 sm:px-[3rem] md:px-[1rem] lg:px-[2rem]">
-          <div class="pb-2 sm:pb-4 text-2xl font-medium text-gray-500">Location : 
-            <span class="px-3 py-1 text-white bg-slate-700 rounded-md">{{ vehicle.buss_vehicle_location}}</span>
-          </div>
-          <h1 class="mt-2 text-4xl font-bold text-gray-800">{{ vehicle.buss_vehicle_company_name }} - {{ vehicle.buss_vehicle_model}}</h1>
-          <div class="my-[1rem] flex items-center gap-[1rem] sm:gap-[2rem]">
-            <span class="text-5xl text-gray-900 font-bold">
-              <span class="font-sans">₹</span>{{ vehicle.buss_rent_per_day }}
-            </span>
-            <span class="text-5xl line-through font-medium text-gray-600 ml-4">
-              <span class="font-sans">₹</span>{{ vehicle.buss_rent_per_day | add:"1200"}}
-            </span>
+  <div class="max-w-[155rem] w-full mx-auto"> 
+    <div class="w-auto sm:w-auto xl:w-10/12 2xl:w-11/12  mx-auto p-6 lg:px-[3rem] bg-white shadow-lg rounded-lg">
+      {% comment %} w-[120rem] {% endcomment %}
+      <!-- Product Details Container -->
+      <div class=" overflow-hidden">
+        <div class="md:flex p-3 sm:p-5 space-y-6 md:space-y-0 md:space-x-6">
+          <!-- Product Image -->
+          <div class="md:w-1/2">
+            <div class="p-6 flex justify-center items-baseline">
+              <img src="/media/{{ vehicle.buss_vehicle_photo }}" class="w-full object-fill rounded-xl hover:scale-105 hover:cursor-grab border-2 border-solid border-gray-200 hover:border-yellow-400 shadow-sm hover:shadow-lg" alt="Product Image">
+            </div>
+            <div class="p-6 flex space-x-6 w-[35%]">
+              <img src="/media/{{ vehicle.buss_vehicle_photo }}" class="w-full object-fill rounded-xl hover:scale-110 hover:cursor-grab border-2 border-solid border-gray-200 hover:border-yellow-400 shadow-sm hover:shadow-lg" alt="Product Image">
+              <img src="/media/{{ vehicle.buss_vehicle_photo }}" class="w-full object-fill rounded-xl hover:scale-110 hover:cursor-grab border-2 border-solid border-gray-200 hover:border-yellow-400 shadow-sm hover:shadow-lg" alt="Product Image">
+              <img src="/media/{{ vehicle.buss_vehicle_photo }}" class="w-full object-fill rounded-xl hover:scale-110 hover:cursor-grab border-2 border-solid border-gray-200 hover:border-yellow-400 shadow-sm hover:shadow-lg" alt="Product Image">
             
-            <span class="text-3xl font-semibold text-gray-900 ml-4">{{ vehicle.buss_vehicle_status }}</span>
-            {% if vehicle.buss_vehicle_status == "Available" %}
-              <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="30" height="30" viewBox="0 0 48 48">
-                <path fill="#c8e6c9" d="M44,24c0,11.045-8.955,20-20,20S4,35.045,4,24S12.955,4,24,4S44,12.955,44,24z"></path><path fill="#4caf50" d="M34.586,14.586l-13.57,13.586l-5.602-5.586l-2.828,2.828l8.434,8.414l16.395-16.414L34.586,14.586z"></path>
-              </svg>
-            {% elif vehicle.buss_vehicle_status == "Booked" %}
-              <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="30" height="30" viewBox="0 0 48 48">
-                <path fill="#ffcdd2" d="M44,24c0,11.045-8.955,20-20,20S4,35.045,4,24S12.955,4,24,4S44,12.955,44,24z"></path>
-                <path fill="none" stroke="#f44336" stroke-width="4" stroke-linecap="round" d="M16,16 L32,32 M32,16 L16,32"></path>
-              </svg>
-            {% endif %}
+            </div>
           </div>
 
+          
+          <!-- Product Details -->
+          <div class="md:w-1/2 p-6 sm:px-[3rem] md:px-[1rem] lg:px-[2rem]">
+            <div class="pb-2 sm:pb-4 text-2xl font-medium text-gray-500">Location : 
+              <span class="px-3 py-1 text-white bg-slate-700 rounded-md">{{ vehicle.buss_vehicle_location}}</span>
+            </div>
+            <h1 class="mt-2 text-4xl font-bold text-gray-800">{{ vehicle.buss_vehicle_company_name }} - {{ vehicle.buss_vehicle_model}}</h1>
+            <div class="my-[1rem] flex items-center gap-[1rem] sm:gap-[2rem]">
+              <span class="text-5xl text-gray-900 font-bold">
+                <span class="font-sans">₹</span>{{ vehicle.buss_rent_per_day }}
+              </span>
+              <span class="text-5xl line-through font-medium text-gray-600 ml-4">
+                <span class="font-sans">₹</span>{{ vehicle.buss_rent_per_day | add:"1200"}}
+              </span>
+              
+              <span class="text-3xl font-semibold text-gray-900 ml-4">{{ vehicle.buss_vehicle_status }}</span>
+              {% if vehicle.buss_vehicle_status == "Available" %}
+                <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="30" height="30" viewBox="0 0 48 48">
+                  <path fill="#c8e6c9" d="M44,24c0,11.045-8.955,20-20,20S4,35.045,4,24S12.955,4,24,4S44,12.955,44,24z"></path><path fill="#4caf50" d="M34.586,14.586l-13.57,13.586l-5.602-5.586l-2.828,2.828l8.434,8.414l16.395-16.414L34.586,14.586z"></path>
+                </svg>
+              {% elif vehicle.buss_vehicle_status == "Booked"  %}
+                <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="30" height="30" viewBox="0 0 48 48">
+                  <path fill="#ffcdd2" d="M44,24c0,11.045-8.955,20-20,20S4,35.045,4,24S12.955,4,24,4S44,12.955,44,24z"></path>
+                  <path fill="none" stroke="#f44336" stroke-width="4" stroke-linecap="round" d="M16,16 L32,32 M32,16 L16,32"></path>
+                </svg>
+              {% endif %}
+            </div>
 
-          <div class="flex items-center">
-            <svg aria-hidden="true" class="h-[3rem] w-[3rem] text-yellow-300" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-              <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
-            </svg>
-            <svg aria-hidden="true" class="h-[3rem] w-[3rem] text-yellow-300" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-              <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
-            </svg>
-            <svg aria-hidden="true" class="h-[3rem] w-[3rem] text-yellow-300" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-              <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
-            </svg>
-            <svg aria-hidden="true" class="h-[3rem] w-[3rem] text-yellow-300" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-              <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
-            </svg>
-            <svg aria-hidden="true" class="h-[3rem] w-[3rem] text-yellow-300" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-              <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
-            </svg>
-            <span class="mx-[1rem] px-[.5rem] py-[.4rem] rounded bg-yellow-300 text-lg font-semibold">5.0</span>
-          </div>
-          
-          <p class="mt-4 text-xl font-medium normal-case text-gray-700">{{ vehicle.buss_vehicle_description}}</p>
-          
-          <div class=" py-[2rem]">
-            {% comment %} <div class="checkout-form-container" > {% endcomment %}
-              <form action="{% url 'vehicle_booking' %}" method="post" >
-                {% csrf_token %}
-                <div class="my-5 w-full flex flex-col lg:flex-row gap-6">
-                  <!-- Calendar area -->
-                  <div class="flex-1 bg-gray-50 border border-gray-200 rounded-xl p-6 shadow-sm flex flex-col min-w-[260px]">
-                    <label for="daterange" class="block text-xl font-semibold select-none mb-3 text-gray-700">Select Date Range</label>
-                    <input id="daterange" name="daterange" class="block w-full transition-transform py-4 px-5 border border-solid border-gray-400 hover:border-blue-500 shadow hover:shadow-md hover:bg-gray-100 rounded-lg text-lg select-none" placeholder="Select date range" required readonly>
-                    <div id="date-range-message" class="hidden mt-2 text-red-600 text-sm font-medium transition-opacity duration-200"></div>
-                    <!-- Legend for calendar -->
-                    <div class="flex items-center mt-3 space-x-2">
-                      <span class="inline-block w-6 h-6 bg-red-400 border-2 border-red-700 rounded"></span>
-                      <span class="text-sm text-gray-700">Booked (unavailable)</span>
+
+            <div class="flex items-center">
+              <svg aria-hidden="true" class="h-[3rem] w-[3rem] text-yellow-300" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
+              </svg>
+              <svg aria-hidden="true" class="h-[3rem] w-[3rem] text-yellow-300" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
+              </svg>
+              <svg aria-hidden="true" class="h-[3rem] w-[3rem] text-yellow-300" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
+              </svg>
+              <svg aria-hidden="true" class="h-[3rem] w-[3rem] text-yellow-300" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
+              </svg>
+              <svg aria-hidden="true" class="h-[3rem] w-[3rem] text-yellow-300" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
+              </svg>
+              <span class="mx-[1rem] px-[.5rem] py-[.4rem] rounded bg-yellow-300 text-lg font-semibold">5.0</span>
+            </div>
+            
+            <p class="mt-4 text-xl font-medium normal-case text-gray-700">{{ vehicle.buss_vehicle_description}}</p>
+            
+            <div class=" py-[2rem]">
+              {% comment %} <div class="checkout-form-container" > {% endcomment %}
+                <form action="{% url 'vehicle_booking' %}" method="post" >
+                  {% csrf_token %}
+                  <div class="my-5 w-full flex flex-col lg:flex-row gap-6">
+                    <!-- Calendar area -->
+                    <div class="flex-1 bg-gray-50 border border-gray-200 rounded-xl p-6 shadow-sm flex flex-col min-w-[260px]">
+                      <label for="daterange" class="block text-xl font-semibold select-none mb-3 text-gray-700">Select Date Range</label>
+                      <input id="daterange" name="daterange" class="block w-full transition-transform py-4 px-5 border border-solid border-gray-400 hover:border-blue-500 shadow hover:shadow-md hover:bg-gray-100 rounded-lg text-lg select-none" placeholder="Select date range" required readonly>
+                      <div id="date-range-message" class="hidden mt-2 text-red-600 text-sm font-medium transition-opacity duration-200"></div>
+                      <!-- Legend for calendar -->
+                      <div class="flex items-center mt-3 space-x-2">
+                        <span class="inline-block w-6 h-6 bg-red-400 border-2 border-red-700 rounded"></span>
+                        <span class="text-sm text-gray-700">Booked (unavailable)</span>
+                      </div>
+                    </div>
+                    <!-- Booked periods list as a card -->
+                    <div class="flex-1 min-w-[220px] max-w-xs bg-white rounded-xl shadow-lg p-6 border border-gray-200 overflow-hidden flex flex-col">
+                      <h4 class="font-semibold text-gray-700 mb-3 text-lg flex items-center"><svg class="w-5 h-5 mr-2 text-blue-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>Booked Periods</h4>
+                      <ul class="text-sm text-gray-600 h-[5rem] space-y-2 overflow-y-auto">
+                        {% for range in booked_ranges %}
+                          <li class="px-3 py-2 rounded bg-gray-100 hover:bg-blue-100 transition-colors cursor-default">{{ range.start }} to {{ range.end }}</li>
+                        {% empty %}
+                          <li>No bookings yet!</li>
+                        {% endfor %}
+                      </ul>
                     </div>
                   </div>
-                  <!-- Booked periods list as a card -->
-                  <div class="flex-1 min-w-[220px] max-w-xs bg-white rounded-xl shadow-lg p-6 border border-gray-200 overflow-hidden flex flex-col">
-                    <h4 class="font-semibold text-gray-700 mb-3 text-lg flex items-center"><svg class="w-5 h-5 mr-2 text-blue-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>Booked Periods</h4>
-                    <ul class="text-sm text-gray-600 h-[5rem] space-y-2 overflow-y-auto">
-                      {% for range in booked_ranges %}
-                        <li class="px-3 py-2 rounded bg-gray-100 hover:bg-blue-100 transition-colors cursor-default">{{ range.start }} to {{ range.end }}</li>
-                      {% empty %}
-                        <li>No bookings yet!</li>
-                      {% endfor %}
-                    </ul>
+                  <input type="hidden" id="sdate" name="sdate" required>
+                  <input type="hidden" id="edate" name="edate" required>
+                  
+                  <div class="relative">
+                    <input type="hidden" name="vid" value="{{ vehicle.id }}" class="box">
+                    <input type="hidden" name="rupee" value="{{ vehicle.buss_rent_per_day }}" class="box">
                   </div>
+                  <input type="submit" id="checkout-btn" value="checkout" class="btn border border-solid border-gray-400 hover:border-blue-500 shadow hover:shadow-sm hover:bg-gray-100 rounded-lg text-[1.6rem] select-none" disabled>
+                  
                 </div>
-                <input type="hidden" id="sdate" name="sdate" required>
-                <input type="hidden" id="edate" name="edate" required>
-                
-                <div class="relative">
-                  <input type="hidden" name="vid" value="{{ vehicle.id }}" class="box">
-                  <input type="hidden" name="rupee" value="{{ vehicle.buss_rent_per_day }}" class="box">
-                </div>
-                <input type="submit" id="checkout-btn" value="checkout" class="btn border border-solid border-gray-400 hover:border-blue-500 shadow hover:shadow-sm hover:bg-gray-100 rounded-lg text-[1.6rem] select-none" disabled>
-                
-              </div>
-            </form>
+              </form>
+            </div>
           </div>
+          
         </div>
-        
-      </div>
 
-      <div class="p-3 sm:px-[3rem]">
-        <!-- Product Description -->
-        <div style="border-bottom:1px solid gray; border-top:1px solid gray;" class="b-solid border-b-4 border-b-indigo-500 overflow-hidden p-6">
-          <h2 class="text-3xl font-bold text-gray-800">Vehicle Description</h2>
-          <p class="mt-4 text-[1.3rem] font-medium text-gray-700">{{ vehicle.buss_vehicle_description}}</p>
-        </div>
-      
-        <!-- Product Specifications -->
-        <div class="overflow-hidden  p-6">
-          <h2 class="text-3xl font-bold text-gray-800">Vehicle Specifications</h2>
-          <ul class="mt-2 text-xl text-gray-500 font-semibold">
-              <li class="my-[1rem] whitespace-pre">location :      {{ vehicle.buss_vehicle_location}}</li>
-              <li class="my-[1rem] whitespace-pre">type :              {{ vehicle.buss_vehicle_type}}</li>
-              <li class="my-[1rem] whitespace-pre">color :             {{ vehicle.buss_vehicle_color}}</li>
-              <li class="my-[1rem] whitespace-pre">number :       {{ vehicle.buss_vehicle_number}}</li>
-              <li class="my-[1rem] whitespace-pre">feul :</li>
-          </ul>
+        <div class="p-3 sm:px-[3rem]">
+          <!-- Product Description -->
+          <div style="border-bottom:1px solid gray; border-top:1px solid gray;" class="b-solid border-b-4 border-b-indigo-500 overflow-hidden p-6">
+            <h2 class="text-3xl font-bold text-gray-800">Vehicle Description</h2>
+            <p class="mt-4 text-[1.3rem] font-medium text-gray-700">{{ vehicle.buss_vehicle_description}}</p>
+          </div>
+        
+          <!-- Product Specifications -->
+          <div class="overflow-hidden  p-6">
+            <h2 class="text-3xl font-bold text-gray-800">Vehicle Specifications</h2>
+            <ul class="mt-2 text-xl text-gray-500 font-semibold">
+                <li class="my-[1rem] whitespace-pre">location :      {{ vehicle.buss_vehicle_location}}</li>
+                <li class="my-[1rem] whitespace-pre">type :              {{ vehicle.buss_vehicle_type}}</li>
+                <li class="my-[1rem] whitespace-pre">color :             {{ vehicle.buss_vehicle_color}}</li>
+                <li class="my-[1rem] whitespace-pre">number :       {{ vehicle.buss_vehicle_number}}</li>
+                <li class="my-[1rem] whitespace-pre">feul :</li>
+            </ul>
+          </div>
         </div>
       </div>
     </div>
-  </div>
-
+  <div class="max-w-[155rem] w-full mx-auto"> 
 </section>
 
 {% endblock %} 
