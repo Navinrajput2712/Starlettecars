@@ -649,7 +649,7 @@ def email_verify(request, buss_auth_token):
         
         else:
             print("Else error")
-            return redirect("verificationerror")
+            return redirect("buss_verificationerror")
     except Exception as e:
         print(e)
     print("ends:::")
@@ -658,7 +658,7 @@ def email_verify(request, buss_auth_token):
 def mail_token_send(request):
     return render(request, "buss_accounts/mail_token_sended.html")
 
-def verificationerror(request):
+def buss_verificationerror(request):
     return render(request, "buss_accounts/verificationerror.html")
 
 def generate_random_vehicle_id():

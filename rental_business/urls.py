@@ -21,7 +21,7 @@ urlpatterns = [
     path("buss_registeration", views.buss_registeration, name="buss_registeration"),
     path("email_verify/<slug:buss_auth_token>", views.email_verify, name="email_verification"),
     path("accounts/verify/email", views.mail_token_send, name="mail_token_send"),
-    path("verificationerror", views.verificationerror, name="verificationerror"),
+    path("verificationerror", views.buss_verificationerror, name="buss_verificationerror"),
     path("add_vehicle",views.add_vehicle, name="add_vehicle"),
 
 
