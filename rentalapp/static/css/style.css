@@ -164,13 +164,12 @@ a .my-bookings:hover{
 .header .navbar{
     margin: 5px 0px;
     padding: 10px 10px 10px 10px;
-    left: 85px;
     position: relative;
     /* background-color: rebeccapurple; */
 }
 .header .navbar a{
     margin:0 1.2rem;
-    font-size: 2rem;
+    font-size: 1.8rem;
     color:var(--black);
     cursor: pointer;
     
@@ -1388,14 +1387,11 @@ a .my-bookings:hover{
     }
     .header .navbar {
         margin: 5px 0px;
-        padding: 10px 10px 10px 10px;
-        left: 23px;
-        /* position: relative; */
-        /* background-color: rebeccapurple; */
+        padding: 10px 5px 10px 5px;
       }
     .header .navbar a {
         margin: 0 1rem;
-        font-size: 1.8rem;
+        font-size: 1.6rem;
         cursor: pointer;
     }
     
