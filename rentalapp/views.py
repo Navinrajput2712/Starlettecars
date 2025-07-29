@@ -29,6 +29,7 @@ from reportlab.lib import colors
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer, Image, KeepTogether
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from django.utils.dateparse import parse_datetime
+import io
 
 
 def index(request):
@@ -56,19 +57,24 @@ def vehicle_search(request):
     query = request.GET.get('search', '').strip()
     vehicles = []
     if query:
-        vehicles = buss_vehicle.objects.filter(
+        vehicles = list(buss_vehicle.objects.filter(
             Q(buss_vehicle_company_name__icontains=query) |
             Q(buss_vehicle_model__icontains=query) |
             Q(buss_vehicle_color__icontains=query) |
             Q(buss_vehicle_number__icontains=query) |
             Q(buss_vehicle_type__icontains=query) |
             Q(buss_vehicle_location__icontains=query)
-        )
+        ))
+    # Get popular vehicles (not in search results)
+    exclude_ids = [v.id for v in vehicles]
+    popular_vehicles = buss_vehicle.objects.filter(
+        buss_vehicle_status="Available"
+    ).exclude(id__in=exclude_ids)[:10]
     context = {
         'query': query,
         'vehicles': vehicles,
+        'popular_vehicles': popular_vehicles,
     }
-
     print("query :",query)
     print("vehicles :",vehicles)
     return render(request, 'vehicle_search_results.html', context)
@@ -357,41 +363,59 @@ def booking_history(request):
 
             vdata = booking_table.objects.filter(login_id=uid).order_by('-booking_date')
             
-            if request.method=="POST":
-                print("POST hitted")
-                search_booked_vehicle = request.POST.get("search_booked_vehicle","").strip()
-                print("search_booked_vehicle ::",search_booked_vehicle)
+            # Filter by status
+            status_filter = request.GET.get('status', '')
+            if status_filter:
+                if status_filter == 'cancelled':
+                    vdata = vdata.filter(is_cancelled=True)
+                else:
+                    vdata = vdata.filter(status=status_filter, is_cancelled=False)
+            
+            # Filter by vehicle type
+            vehicle_type_filter = request.GET.get('vehicle_type', '')
+            if vehicle_type_filter:
+                vdata = vdata.filter(vehicle_id__buss_vehicle_type=vehicle_type_filter)
+            
+            # Filter by date range
+            start_date = request.GET.get('start_date', '')
+            end_date = request.GET.get('end_date', '')
+            if start_date:
+                vdata = vdata.filter(booking_date__date__gte=start_date)
+            if end_date:
+                vdata = vdata.filter(booking_date__date__lte=end_date)
+            
+            # Search functionality
+            if request.method == "POST":
+                search_booked_vehicle = request.POST.get("search_booked_vehicle", "").strip()
                 if search_booked_vehicle:
                     vdata = vdata.filter(
                         Q(vehicle_id__buss_vehicle_company_name__icontains=search_booked_vehicle) |
                         Q(vehicle_id__buss_vehicle_model__icontains=search_booked_vehicle) |
                         Q(vehicle_id__buss_vehicle_color__icontains=search_booked_vehicle) |
-                        Q(booking_date__icontains=search_booked_vehicle)
+                        Q(booking_date__icontains=search_booked_vehicle) |
+                        Q(vehicle_id__buss_vehicle_number__icontains=search_booked_vehicle) |
+                        Q(vehicle_id__buss_vehicle_location__icontains=search_booked_vehicle)
                     )
-
             
-            vehicles = []
-            service_charges = 250.0
-            tax_percentage = 18
-            for vehicle in vehicles:
-                base_rental = float(vehicle.amount) 
-                tax_amount = base_rental * tax_percentage / 100
-                total_rental_amount = base_rental + service_charges + tax_amount
-
-                vehicles.append({
-                    'name': vehicle.name,
-                    'base_rental': base_rental,
-                    'service_charges': service_charges,
-                    'tax_amount': tax_amount,
-                    'total_rental_amount': total_rental_amount,
-                })
+            # Pagination
+            from django.core.paginator import Paginator
+            page_number = request.GET.get('page', 1)
+            paginator = Paginator(vdata, 9)  # Show 9 bookings per page
+            page_obj = paginator.get_page(page_number)
+            
+            # Get unique vehicle types for filter dropdown
+            vehicle_types = buss_vehicle.objects.values_list('buss_vehicle_type', flat=True).distinct()
+            
             udata = usertable.objects.filter(id=uid)[0]
             context = {
-                'vehicles': vehicles,
-                'service_charges': service_charges,
-                'tax_percentage': tax_percentage,
-                "vdata": vdata, 
-                "udata": udata
+                "vdata": page_obj, 
+                "udata": udata,
+                "status_filter": status_filter,
+                "vehicle_type_filter": vehicle_type_filter,
+                "start_date": start_date,
+                "end_date": end_date,
+                "vehicle_types": vehicle_types,
+                "total_bookings": vdata.count(),
             }
             return render(request, "booking_history.html", context)
     except KeyError:
@@ -466,6 +490,9 @@ def generate_rental_receipt(request):
                 "tax":"GST",
                 "tax_per":18,
                 "total_rental_amount": total_rental_amount,
+                "status": booked_vehicle_data.status,
+                "is_cancelled": booked_vehicle_data.is_cancelled,
+                "cancelled_at": booked_vehicle_data.cancelled_at,
             }
             pricing_data = {
                 "base_price": "₹2500/day",
@@ -653,68 +680,104 @@ def download_generate_rental_receipt_as_pdf(request):
                     "tax": "GST",
                     "tax_per": tax_percentage,
                     "total_rental_amount": total_rental_amount,
+                    "status": booked_vehicle_data.status,
+                    "is_cancelled": booked_vehicle_data.is_cancelled,
+                    "cancelled_at": booked_vehicle_data.cancelled_at,
                 }
 
-                # Create PDF Response
-                response = HttpResponse(content_type='application/pdf')
-                response['Content-Disposition'] = 'attachment; filename="rental_receipt.pdf"'
+                # Render the HTML template with the same data (using PDF-specific template)
+                html_content = render_to_string('booking_receipt_pdf.html', {
+                    'user_data': user_data,
+                    'vehicle_data': vehicle_data,
+                    'booking_data': booking_data,
+                })
 
-                # Create the PDF canvas
-                c = canvas.Canvas(response, pagesize=letter)
-                width, height = letter
+                # Try to use playwright for HTML to PDF conversion (most professional)
+                try:
+                    from playwright.sync_api import sync_playwright
+                    
+                    with sync_playwright() as p:
+                        browser = p.chromium.launch(headless=True)
+                        page = browser.new_page()
+                        
+                        # Set content and wait for it to load
+                        page.set_content(html_content, wait_until='networkidle')
+                        
+                        # Generate PDF with professional settings
+                        pdf = page.pdf(
+                            format='A4',
+                            margin={
+                                'top': '0.75in',
+                                'right': '0.75in',
+                                'bottom': '0.75in',
+                                'left': '0.75in'
+                            },
+                            print_background=True,
+                            prefer_css_page_size=True
+                        )
+                        
+                        browser.close()
+                    
+                    # Create HTTP response
+                    response = HttpResponse(pdf, content_type='application/pdf')
+                    response['Content-Disposition'] = f'attachment; filename="receipt_{booked_vehicle_data.id}.pdf"'
+                    
+                    return response
+                except Exception as e:
+                    print(f"Playwright error: {e}")
+                    # Fallback to pdfkit
+                    pass
 
-                # Header
-                c.setFont("Helvetica", 14)
-                c.drawString(30, height - 40, "Rental Receipt")
-                c.setFont("Helvetica", 10)
-                c.drawString(30, height - 60, "439 Rental Street, Ahmedabad, Gujarat, India")
-                c.drawString(30, height - 75, "Phone: +916376094539")
-                c.drawString(30, height - 90, "Email: starlettecars@gmail.com")
-                c.setFillColor(colors.blue)
-                c.drawString(30, height - 105, "Website: starlettecars.com")
-                c.setFillColor(colors.black)
-
-                # User Details
-                c.setFont("Helvetica", 12)
-                c.drawString(30, height - 140, "User Details:")
-                c.setFont("Helvetica", 10)
-                y_position = height - 155
-                for key, value in user_data.items():
-                    c.drawString(30, y_position, f"{key.replace('_', ' ').title()}: {value}")
-                    y_position -= 15
-
-                # Vehicle Details
-                c.setFont("Helvetica", 12)
-                c.drawString(30, y_position - 20, "Vehicle Details:")
-                c.setFont("Helvetica", 10)
-                y_position -= 35
-                for key, value in vehicle_data.items():
-                    c.drawString(30, y_position, f"{key.replace('_', ' ').title()}: {value}")
-                    y_position -= 15
-
-                # Booking Details
-                c.setFont("Helvetica", 12)
-                c.drawString(30, y_position - 20, "Booking Details:")
-                c.setFont("Helvetica", 10)
-                y_position -= 35
-                for key, value in booking_data.items():
-                    c.drawString(30, y_position, f"{key.replace('_', ' ').title()}: {value}")
-                    y_position -= 15
-
-                # Total Amount
-                c.setFont("Helvetica-Bold", 12)
-                c.drawString(30, y_position - 20, f"Total Amount: ₹{total_rental_amount}")
-
-                # Footer
-                c.setFont("Helvetica", 8)
-                c.drawString(30, 30, "Thank you for choosing our service!")
-                c.drawString(30, 15, "Contact us at starlettecars@gmail.com or +916376094539")
-
-                # Save the PDF
-                c.showPage()
-                c.save()
-
-                return response
+                # Try to use pdfkit for HTML to PDF conversion (fallback)
+                try:
+                    # Configure pdfkit to find wkhtmltopdf on Windows
+                    import pdfkit
+                    
+                    # Try to find wkhtmltopdf in common Windows locations
+                    wkhtmltopdf_paths = [
+                        r'C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe',
+                        r'C:\Program Files (x86)\wkhtmltopdf\bin\wkhtmltopdf.exe',
+                        r'C:\wkhtmltopdf\bin\wkhtmltopdf.exe',
+                    ]
+                    
+                    wkhtmltopdf_path = None
+                    for path in wkhtmltopdf_paths:
+                        if os.path.exists(path):
+                            wkhtmltopdf_path = path
+                            break
+                    
+                    # Configure pdfkit options for better rendering
+                    options = {
+                        'page-size': 'A4',
+                        'margin-top': '0.75in',
+                        'margin-right': '0.75in',
+                        'margin-bottom': '0.75in',
+                        'margin-left': '0.75in',
+                        'encoding': "UTF-8",
+                        'no-outline': None,
+                        'enable-local-file-access': None,
+                        'print-media-type': None,
+                        'disable-smart-shrinking': None,
+                        'zoom': 1.0,
+                    }
+                    
+                    # Create PDF from HTML using pdfkit
+                    if wkhtmltopdf_path:
+                        config = pdfkit.configuration(wkhtmltopdf=wkhtmltopdf_path)
+                        pdf = pdfkit.from_string(html_content, False, options=options, configuration=config)
+                    else:
+                        # Try without explicit path (if it's in PATH)
+                        pdf = pdfkit.from_string(html_content, False, options=options)
+                    
+                    # Create HTTP response
+                    response = HttpResponse(pdf, content_type='application/pdf')
+                    response['Content-Disposition'] = f'attachment; filename="receipt_{booked_vehicle_data.id}.pdf"'
+                    
+                    return response
+                except Exception as e:
+                    print(f"PDFKit error: {e}")
+                    # Fallback to manual PDF generation
+                    pass
 
     except KeyError:
         return redirect("booking_history")
@@ -800,28 +863,6 @@ def showdata(request):
 
     return render(request, "index.html")
 
-    #     elif password == rpassword:
-    #         if usertable.objects.filter(name=name).exists():
-    #             messages.info(request, "Username Already Taken")
-    #             return redirect('index')
-    #         elif usertable.objects.filter(emailid=email).exists():
-    #             messages.info(request, "Email Already Taken")
-    #             return redirect('index')
-    #         else:
-    #             logindata = usertable(emailid=email, phoneno=phoneno, password=password,rpassword=rpassword, name=name, licence_no=licence_no, address=address, role=2, status=1)
-    #             logindata.save()
-    #             messages.success(request, 'Registartion done!')
-    #             print("User Created..")
-    #             return redirect('index')
-    #
-    #     else:
-    #         messages.error(request, 'Your Password and Confirm Password does not Matched!!')
-    #         return redirect('index')
-    # else:
-    #     messages.error(request, 'error occured!')
-    #
-    # return render(request, 'index.html')
-
 
 def checklogin(request):
     if request.method == "POST":
@@ -852,7 +893,7 @@ def checklogin(request):
                 return redirect("/")
 
         else:
-            messages.info(request, "account does not exist plz sign in")
+            messages.info(request, "Invalid credentials. Please check your details and try again.")
             return redirect("/")
             # return render(request,'index.html')
     return render(request, "index.html")
@@ -1178,10 +1219,16 @@ def Resend_Email_Verification_Token(request):
                     if associated_user.is_verified:
                         messages.success(request, "Your account is already verified.")
                         return redirect("/")
-                    auth_token = associated_user.auth_token
-                    send_mail_after_registration(email, auth_token)
-                    # messages.success(request, "Verification email resent successfully. Check your email.")
-                # return redirect("login")
+                    if not associated_user.is_verified:
+                            
+                        auth_token = str(uuid.uuid4())
+
+                        associated_user.auth_token = auth_token
+                        associated_user.save()
+
+                        send_mail_after_registration(email, auth_token)
+                        messages.info(request, "your account verification request has been sended to your registered email, please check your email for a verification link.")
+                
                 user_mail_data = email
                 return render(request, 'accounts/Verification_Token_Sended.html',{"associated_user": user_mail_data})  # Replace 'success' with the actual success URL
             except usertable.DoesNotExist:
@@ -1228,14 +1275,11 @@ def verify(request, auth_token):
             messages.success(request, "Your Account has been varified.")
             return redirect("login")
         else:
-            return redirect("verificationerror")
+            return render(request, "accounts/verificationerror.html")
     except Exception as e:
         print(e)
-    # return True
-
-
-def verificationerror(request):
     return render(request, "accounts/verificationerror.html")
+
 
 def login(request):
     try:
@@ -1255,10 +1299,21 @@ def login(request):
                 user = usertable.objects.filter(emailid=email).first()
                 
                 if not user:    
-                    messages.error(request, "Account does not exist. Please sign up.")
+                    messages.error(request, "Invalid credentials. Please check your details and try again.")
                     return render(request, "accounts/login.html")
                 if not user.is_verified:
-                    messages.error(request, "Please verify your account.")
+                    if user.password == password:
+                        messages.info(request, "If your account is not verified, please check your email for a verification link.")
+                        
+                        auth_token = str(uuid.uuid4())
+
+                        user.auth_token = auth_token
+                        user.save()
+
+                        send_mail_after_registration(email, auth_token)
+                    else:
+                        messages.error(request, "Invalid credentials. Please check your details and try again.")
+
                     return render(request, "accounts/login.html")
                 if user.password == password:
                     # Successful login
@@ -1269,40 +1324,16 @@ def login(request):
                     messages.success(request, "Login successful!", extra_tags="login_success")
                     return redirect("/")
                 else:
-                    messages.error(request, "Invalid password. Please try again.")
-
-
-                # if user_is.is_verified:
-                #     try:
-                #         user = usertable.objects.get(emailid=email, password=password)
-                #         request.session["log_user"] = user.emailid
-                #         request.session["log_id"] = user.id
-                #         user.update_last_login()
-                #         request.session.save()
-                #         print("try user:::", user)
-                #     except usertable.DoesNotExist:
-                #         user = None
-                #         print("exception user is None:", user)
-
-                #     if user is not None:
-                #         # return render(request,'index.html')
-                #         print("User is Not None!!!")
-                #         return redirect("/")
-                #     else:
-                #         messages.error(request, "Password does not matched!!!")
-                #         print("Password does not matched!!!")
-                # else:
-                #     print("Please verify your account...")
-                #     messages.error(request, "Please verify your account...")
+                    messages.error(request, "Invalid Credentials. Please try again.")
 
             else:
-                messages.error(request, "Account does not exist. Please sign up.")
+                messages.error(request, "Account does not exist please register your account.")
                 print("account does not exist plz sign in")
-                # return redirect('/')
-                return render(request, "accounts/login.html")
+                return render(request, "accounts/register.html")
+
         except Exception as e:
             print("this is main Exception ::", e)
-    print("login bottom!!!!!!!!")
+    
     return render(request, "accounts/login.html")
 
 # logout
@@ -1980,3 +2011,49 @@ def generate_booked_vehicle_report(request):
             'error': 'An error occurred.',
         })
     
+def booking_details(request, booking_id):
+    """View for booking details modal"""
+    try:
+        if request.session["log_id"]:
+            uid = request.session["log_id"]
+            booking = booking_table.objects.get(id=booking_id, login_id=uid)
+            udata = usertable.objects.filter(id=uid)[0]
+            
+            context = {
+                "booking": booking,
+                "udata": udata,
+            }
+            return render(request, "booking_details_modal.html", context)
+    except (KeyError, booking_table.DoesNotExist):
+        messages.error(request, "Booking not found or access denied!")
+        return redirect("booking_history")
+
+
+def booking_reminders(request):
+    """Show upcoming booking reminders"""
+    try:
+        if request.session["log_id"]:
+            uid = request.session["log_id"]
+            
+            # Get upcoming bookings (within next 7 days)
+            from datetime import date, timedelta
+            today = date.today()
+            next_week = today + timedelta(days=7)
+            
+            upcoming_bookings = booking_table.objects.filter(
+                login_id=uid,
+                from_duration__gte=today,
+                from_duration__lte=next_week,
+                status='approved',
+                is_cancelled=False
+            ).order_by('from_duration')
+            
+            udata = usertable.objects.filter(id=uid)[0]
+            context = {
+                "upcoming_bookings": upcoming_bookings,
+                "udata": udata,
+            }
+            return render(request, "booking_reminders.html", context)
+    except KeyError:
+        messages.error(request, "Please login to view reminders!")
+        return redirect("login") 

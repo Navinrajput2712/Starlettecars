@@ -21,6 +21,8 @@ urlpatterns = [
     path("vehicle/checkout/<int:id>", views.checkout, name="vehicle_checkout"),
     path("vehicle/booking", views.vehicle_booking, name="vehicle_booking"),
     path("booking/history", views.booking_history, name="booking_history"),
+    path("booking/details/<int:booking_id>", views.booking_details, name="booking_details"),
+    path("booking/reminders", views.booking_reminders, name="booking_reminders"),
     path('vehicle/booking/generate-receipt', views.generate_rental_receipt, name='rental_receipt'),
     path('vehicle/booking/download_generate_rental_receipt_as_pdf', views.download_generate_rental_receipt_as_pdf, name='download_generate_rental_receipt_as_pdf'),
     path("cancelbooking/<int:id>", views.cancelbooking, name="cancelbooking"),
@@ -56,8 +58,6 @@ urlpatterns = [
     # path("accounts/verify/email", views.EmailVerificationTokenSended, name="EmailVerificationTokenSended"),
     path("accounts/verify/<slug:auth_token>", views.verify, name="verify"),
     path("accounts/verify/email/resend", views.Resend_Email_Verification_Token, name="Resend_Email_Verification_Token"),
-    path("accounts/verification/error=??", views.verificationerror, name="verificationerror",), 
-
 
     # Report
     path("generate/report", views.generate_report, name="generate_report",),
