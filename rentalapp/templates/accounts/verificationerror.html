@@ -1,16 +1,22 @@
 {% extends "master.html" %}
+
 {% block content %}
-<div class="global_container" style="align-content: center; align-items: center; display: flex; top: 25vh; position: absolute; left: 72vh; margin:10px 10px; padding:20px 20px;">
-    <div class="card login_form">
-        <div class="card_body" style=" margin:20px 20px; padding: 20px 20px;">
-            <h3 class="card_title test_center mt-2 px-3">Verification Error!!</h3>
-            <div class="card_text mt-2 px-5">
-                Please Register Again
-            </div>
-            <a href="{% url 'register_attempt' %}" class="btn btn-primary mt-2 mx-5 px-5">Register</a>
-        </div>
+<div class="flex items-center justify-center min-h-screen bg-gradient-to-br from-red-50 to-blue-50 py-12 px-4">
+  <div class="w-full max-w-3xl bg-white rounded-2xl shadow-xl p-8 flex flex-col items-center">
+    <div class="flex flex-col items-center mb-6">
+      <div class="flex items-center justify-center w-20 h-20 rounded-full bg-red-100 mb-4">
+        <svg class="w-12 h-12 text-red-500" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+          <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2.5" fill="none"/>
+          <line x1="9" y1="9" x2="15" y2="15" stroke="currentColor" stroke-width="2.5"/>
+          <line x1="15" y1="9" x2="9" y2="15" stroke="currentColor" stroke-width="2.5"/>
+        </svg>
+      </div>
+      <h3 class="text-2xl font-bold text-gray-900 mb-2">Verification Error</h3>
+      <p class="text-gray-600 text-center">There was a problem verifying your account.<br/>Please register again to continue.</p>
     </div>
+    <a href="{% url 'register_attempt' %}" class="w-full py-3 px-4 bg-blue-600 text-white font-semibold rounded-lg shadow hover:bg-blue-700 transition text-center">Register</a>
+  </div>
 </div>
-{% endblock %} 
+{% endblock %}
 
 {% block footer %}{% endblock %}
