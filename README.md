@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Project Setup Guide
 
 Welcome to the project! This guide will help you set up and run the project efficiently.
@@ -199,3 +200,6 @@ python manage.py collectstatic
 ---
 ## 🎯 Done!
 Your project is now fully set up and ready to go! 🚀
+=======
+# Starlettecars
+>>>>>>> 41e265d55376cba7ec7867f114e10cdefcc96eb0
